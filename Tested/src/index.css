@@ -1,0 +1,27 @@
+nav {
+  border: 3px solid rgb(9, 9, 9);
+  background-color: gray;
+}
+
+ul{
+  padding: 3%;
+  margin: 0;
+  display: flex;
+  list-style: none;
+  justify-content: space-around;
+  gap: 20px;
+  overflow: auto;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  color: white;
+}
+
+li{
+  text-transform: capitalize;
+}

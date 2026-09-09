@@ -1,0 +1,81 @@
+.head{
+    width: 90%;
+    max-width: 1400px;
+    margin: 15px auto 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 12px 0;
+
+    box-sizing: border-box;
+}
+
+.logo{
+    display: block;
+    width: 160px;
+    height: auto;
+    object-fit: contain;
+}
+
+.head-logout{
+    padding: 9px 16px;
+
+    background-color: #F59E0B;
+    color: #222;
+
+    border: 1px solid #ccc;
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.head-logout:hover{
+    background-color: #222;
+    color: #fff;
+    border-color: #222;
+
+    transform: translateY(-2px);
+}
+
+.head-logout:active{
+    transform: scale(0.97);
+}
+
+
+
+/* Mobile */
+
+@media (max-width: 767px){
+
+    .head{
+        width: 94%;
+        padding: 8px 0;
+    }
+
+    .logo{
+        width: 105px;
+    }
+
+    .head-logout{
+        padding: 7px 12px;
+        font-size: 12px;
+    }
+}
+
+/* Tablet */
+
+@media (max-width: 1199px){
+    .head{
+        width: 94%;
+    }
+
+    .logo{
+        width: 135px;
+    }
+}
