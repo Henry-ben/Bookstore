@@ -82,15 +82,17 @@ function Homecontent() {
             
 
             
-                <button
-                    type="button"
-                    className={homeDisplay === "My Books" ? "active" : ""}
-                    onClick={() =>
-                        setHomeDisplay("My Books")
-                    }
-                >
-                    My Books
-                </button>
+                {role === "Guest" && (
+                    <button
+                        type="button"
+                        className={homeDisplay === "My Books" ? "active" : ""}
+                        onClick={() =>
+                            setHomeDisplay("My Books")
+                        }
+                    >
+                        My Books
+                    </button>
+                )}
             </div>
 
             <section>
