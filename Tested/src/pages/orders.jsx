@@ -8,10 +8,12 @@ export default function Order(){
 
     const [orders, setOrders] = useState([]);
 
+    const apiUrl= import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
      async function fetchOrders() {
         try{
                 const response = await axios.get(
-                    "http://localhost:5000/api/orders/admin-orders",
+                    `${apiUrl}/api/orders/admin-orders`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("currentToken")}`

@@ -13,9 +13,11 @@ export default function Books(){
     const user = JSON.parse(localStorage.getItem("currentUser"));
     const isAdmin = user?.role === "Admin";
 
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
     async function fetchBooks() {
         try {
-            const books = await axios.get('http://localhost:5000/api/books');
+            const books = await axios.get(`${apiUrl}/api/books`);
             setBook(books.data);
         } catch (error) {
             console.error("Error fetching books:", error);

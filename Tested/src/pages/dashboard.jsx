@@ -7,6 +7,8 @@ export default function Dashboard(){
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("All")
     const mostOrdered = {};
+
+    const apiUrl= import.meta.env.VITE_API_URL || 'http://localhost:5000';
     
     for (const order of orders){
         for(const book of order.books){
@@ -32,7 +34,7 @@ export default function Dashboard(){
     async function updateStatus(id,status){
         try{
             await axios.put(
-                `http://localhost:5000/api/orders/${id}/status`,
+                `${apiUrl}/api/orders/${id}/status`,
                 {},
                 { 
                     headers: { Authorization: `Bearer ${localStorage.getItem("currentToken")}` }, params: { status } 
@@ -47,7 +49,7 @@ export default function Dashboard(){
     async function fetchOrders() {
         try{
                 const response = await axios.get(
-                    "http://localhost:5000/api/orders/admin-orders",
+                    `${apiUrl}/api/orders/admin-orders`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("currentToken")}`

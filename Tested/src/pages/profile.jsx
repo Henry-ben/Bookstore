@@ -21,13 +21,14 @@ export default function Profile(){
     const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
 
 
-    
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
     const isAdmin = user?.role === "Admin";
 
     async function loadSettings(){
         try{
             const response = await axios.get(
-            "http://localhost:5000/api/settings",{
+            `${apiUrl}/api/settings`,{
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("currentToken")}`,
             },
@@ -44,7 +45,7 @@ export default function Profile(){
     }
     async function saveSettings() {
         try{await axios.put(
-                "http://localhost:5000/api/settings",
+                `${apiUrl}/api/settings`,
                 {
                     businessName,
                     businessEmail,
@@ -71,7 +72,7 @@ export default function Profile(){
 async function saveProfile() {
     try {
         const response = await axios.put(
-            `http://localhost:5000/api/auth/profile/${user.id}`,
+            `${apiUrl}/api/auth/profile/${user.id}`,
             {
                 name,
                 email,

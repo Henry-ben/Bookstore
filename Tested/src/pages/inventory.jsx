@@ -13,6 +13,9 @@ export default function Inventory(){
     const [price, setPrice] = useState(0)
     const [showForm, setShowform] = useState(false);
 
+
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
     const handleAddBook = async (e) => {
         e.preventDefault();
         const bookData = {
@@ -27,7 +30,7 @@ export default function Inventory(){
         try {
             if(editIndex !== null){
                 const bookId = inventory[editIndex].id;
-                const response = await axios.put(`http://localhost:5000/api/books/${bookId}`, bookData, {
+                const response = await axios.put(`${apiUrl}/api/books/${bookId}`, bookData, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("currentToken")}`
                     }
@@ -38,7 +41,7 @@ export default function Inventory(){
                 setInventory(updatedInventory);
                 setMessage("Book updated successfully");
             }else{
-                const response = await axios.post("http://localhost:5000/api/books/add", bookData, {
+                const response = await axios.post(`${apiUrl}/api/books/add`, bookData, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("currentToken")}`
                     }
@@ -78,7 +81,7 @@ export default function Inventory(){
         // Implement delete functionality here
         try {
             const bookToDelete = inventory[index];
-            await axios.delete(`http://localhost:5000/api/books/${bookToDelete.id}`, {
+            await axios.delete(`${apiUrl}/api/books/${bookToDelete.id}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("currentToken")}`
                 }
@@ -104,7 +107,7 @@ export default function Inventory(){
     }
  async function fetchInventory() {
         try {
-            const response = await axios.get('http://localhost:5000/api/books');
+            const response = await axios.get(`${apiUrl}/api/books`);
             console.log(response.data);
             setInventory(response.data);
         } catch (error) {

@@ -16,11 +16,13 @@ export default function Yourorder(){
         return<p>Please login</p>
     }
 
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 
     async function download(order) {
     try {
         const response = await axios.get(
-            "http://localhost:5000/api/settings"
+            `${apiUrl}/api/settings`
         );
 
         const settings = response.data;
@@ -202,7 +204,7 @@ export default function Yourorder(){
 
     async function fetchOrders() {
         try {
-            const response = await axios.get(`http://localhost:5000/api/orders?userId=${currentUser.id}`, {
+            const response = await axios.get(`${apiUrl}/api/orders?userId=${currentUser.id}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("currentToken")}`
                 }
@@ -241,7 +243,7 @@ export default function Yourorder(){
         const user = JSON.parse(localStorage.getItem("currentUser"));
 
         const response = await axios.post(
-            "http://localhost:5000/api/paystack/initiate",
+            `${apiUrl}/api/paystack/initiate`,
             {
                 email: user.email,
                 amount: addUpPrice()
@@ -283,7 +285,7 @@ export default function Yourorder(){
             
             try {
                 const response = await axios.get(
-                    `http://localhost:5000/api/paystack/verify/${reference}`
+                    `${apiUrl}/api/paystack/verify/${reference}`
                 );
 
                 if (response.data.data.status === "success") {
@@ -291,7 +293,7 @@ export default function Yourorder(){
                     const user = JSON.parse(localStorage.getItem("currentUser"));
                     if (cartBooks.length > 0) {
                         await axios.post(
-                            "http://localhost:5000/api/orders/add",
+                            `${apiUrl}/api/orders/add`,
                             {
                                 userId: user.id,
                                 customerName: user.name,

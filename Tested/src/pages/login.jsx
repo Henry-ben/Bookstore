@@ -119,13 +119,14 @@ function Logsign(){
         </form>
 
     )
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     async function handleLogin(e){
         e.preventDefault();
 
         try {
                 const response = await axios.post(
-                    "http://localhost:5000/api/auth/login",
+                    `${apiUrl}/api/auth/login`,
                     {
                         phoneNumber: loginNumber,
                         password: loginPassword
@@ -155,7 +156,7 @@ function Logsign(){
         
         try {
                 const response = await axios.post(
-                    "http://localhost:5000/api/auth/register",
+                    `${apiUrl}/api/auth/register`,
                 {
                     name,
                     email,
