@@ -21,7 +21,7 @@ export default function Dashboard(){
     }
 
     const revenue = orders.reduce(
-        (total, order) => total + order.totalPrice, 0
+        (total, order) => total + Number(order.totalPrice), 0
     );
 
     const booksSold = orders.reduce(
