@@ -9,6 +9,7 @@ import { getAnnouncements } from "../Api/announcement.js";
 
 function Homecontent() {
     const user = JSON.parse(localStorage.getItem("currentUser"));
+    const role = user?.role;
 
     const [homeDisplay, setHomeDisplay] = useState("Announcements");
     const [announcements, setAnnouncements] = useState([]);
@@ -139,7 +140,7 @@ function Homecontent() {
             </section>
 
             <section>
-                {homeDisplay === "My Books" && (
+                {homeDisplay === "My Books" && role === "Guest" && (
                     <div className="home-section">
                         <div className="section-heading">
                           <h2>My Favorite Books</h2>
