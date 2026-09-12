@@ -69,7 +69,7 @@ function Homecontent() {
                 </h2>
             </div>
 
-            <div className="home-tabs">
+            <div className={role === "Guest" ? "home-tabs" : "home-tabs single"}>
                 <button
                     type="button"
                     className={homeDisplay === "Announcements" ? "active" : ""}

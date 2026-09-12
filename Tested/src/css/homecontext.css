@@ -31,6 +31,10 @@
     background-color: #0F172A;
 }
 
+.home-tabs.single{
+    justify-content: center;
+}
+
 
 .home-tabs button{
     padding: 12px 25px;
