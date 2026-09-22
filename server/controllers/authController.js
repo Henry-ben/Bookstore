@@ -153,9 +153,9 @@ export async function registerUser(req, res) {
 
                 const result = await pool.query(`
                     UPDATE users
-                    SET profile_image_url = $1
+                    SET profile_image = $1
                     WHERE id = $2
-                    RETURNING id, name, email, phone_number AS "phoneNumber", role, profile_image_url AS "profileImageUrl"
+                    RETURNING id, name, email, phone_number AS "phoneNumber", role, profile_image
                 `, [imageUrl, userId]);
 
                 if (result.rows.length === 0) {
@@ -171,7 +171,7 @@ export async function registerUser(req, res) {
                         email: user.email,
                         phoneNumber: user.phoneNumber,
                         role: user.role,
-                        profileImageUrl: user.profileImageUrl
+                        profileImageUrl: user.profile_image
                     }
                  });
         }catch (error) {
