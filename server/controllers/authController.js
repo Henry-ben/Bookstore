@@ -146,7 +146,7 @@ export async function registerUser(req, res) {
                 }
 
                 const {data} = supabase.storage
-                    .from('profile-images')
+                    .from('profile_images')
                     .getPublicUrl(fileName);
                 
                 const imageUrl = data.publicUrl;
