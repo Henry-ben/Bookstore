@@ -179,7 +179,7 @@ export async function registerUser(req, res) {
 
             const fileExtension = req.file.originalname.split('.').pop();
 
-            const fileName = `profile_${userId}.${fileExtension}`;
+            const fileName = `profile_${userId}_${Date.now()}.${fileExtension}`;
 
             const{error: uploadError} = await supabase.storage
                 .from('profile_image')

@@ -80,13 +80,13 @@ export default function Profile(){
         setUser(updatedUser);
         setProfileImage(updatedUser.profileImage);
 
-        alert("Profile image updated successfully!");
+        console.log("Profile image updated successfully!");
 
     } catch (error) {
         console.error("Error uploading profile image:", error);
         console.log(error.response?.data);
 
-        alert(
+        console.log(
             error.response?.data?.message ||
             "Unable to upload profile image."
         );
