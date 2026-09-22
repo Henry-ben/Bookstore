@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import pool from "../config/db.js";
-
+import supabase from "../config/supabase.js";
 
 //register user
 export async function registerUser(req, res) {
@@ -59,6 +59,7 @@ export async function registerUser(req, res) {
                     email: user.email,
                     phoneNumber: user.phone_number,
                     role: user.role,
+                    profileImage: user.profile_image
                 }
             });
         } catch (error) {
@@ -82,7 +83,7 @@ export async function registerUser(req, res) {
                 UPDATE users
                 SET name = $1, email = $2, phone_number = $3
                 WHERE id = $4
-                RETURNING id, name, email, phone_number AS "phoneNumber", role
+                RETURNING id, name, email, phone_number AS "phoneNumber", role, profile_image
             `, [name, email, phoneNumber, req.params.id]);
 
             if (result.rows.length === 0) {
@@ -97,7 +98,8 @@ export async function registerUser(req, res) {
                     name: user.name,
                     email: user.email,
                     phoneNumber: user.phone_number,
-                    role: user.role
+                    role: user.role,
+                    profileImage: user.profile_image
                 }
              });
             
@@ -111,6 +113,73 @@ export async function registerUser(req, res) {
         
     }
 
+    
+    //uploading profile image
+    export async function profileImage(req, res) {
+        try {
+
+            if(String(req.user.id) !== String(req.params.id)){
+                return res.status(403).json({
+                    message: "Access denied"
+                })
+            }
+            if (!req.file) {
+                return res.status(400).json({ message: "No image uploaded" });
+            }
+
+            const userId = req.params.id;
+
+            const fileExtension = req.file.originalname.split('.').pop();
+
+            const fileName = `profile_${userId}.${fileExtension}`;
+
+            const{error: uploadError} = await supabase.storage
+                .from('profile-images')
+                .upload(fileName, req.file.buffer, {
+                    contentType: req.file.mimetype,
+                    upsert: true
+                });
+
+                if(uploadError){
+                    console.error("Supabase upload error:", uploadError);
+                    return res.status(500).json({ message: "Error uploading image" });
+                }
+
+                const {data} = supabase.storage
+                    .from('profile-images')
+                    .getPublicUrl(fileName);
+                
+                const imageUrl = data.publicUrl;
+
+                const result = await pool.query(`
+                    UPDATE users
+                    SET profile_image_url = $1
+                    WHERE id = $2
+                    RETURNING id, name, email, phone_number AS "phoneNumber", role, profile_image_url AS "profileImageUrl"
+                `, [imageUrl, userId]);
+
+                if (result.rows.length === 0) {
+                    return res.status(404).json({ message: "User not found" });
+                }
+
+                const user = result.rows[0];
+                res.json({ 
+                    message: "Profile image updated successfully",
+                    user: {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        phoneNumber: user.phoneNumber,
+                        role: user.role,
+                        profileImageUrl: user.profileImageUrl
+                    }
+                 });
+        }catch (error) {
+            console.error("Error updating profile image:", error);
+            res.status(500).json({ message: "Server error" });
+        }
+    }
+            
     //cart and favorite books management
     export async function getCart(req, res) {
         try {

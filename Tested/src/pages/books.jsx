@@ -9,6 +9,9 @@ export default function Books(){
     const [foundBook, setFoundBook] = useState(null);
     const [book, setBook] = useState([]);
     const[cartQuantity , setCartQuantity] = useState({})
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const booksPerPage = 6;
     
     const user = JSON.parse(localStorage.getItem("currentUser"));
     const isAdmin = user?.role === "Admin";
@@ -24,6 +27,15 @@ export default function Books(){
         }
     }
 
+    const totalPages = Math.ceil(book.length / booksPerPage);
+
+    const startIndex = (currentPage - 1) * booksPerPage;
+
+    const currentBooks = book.slice(
+        startIndex,
+        startIndex + booksPerPage
+    );
+
     useEffect(() => {
         fetchBooks();
     }, []);
@@ -31,26 +43,41 @@ export default function Books(){
     function DisplayBook() {
 
        return(
-        <div className="books-grid"> 
-            {book.map((b) => (
-                <div className="book-card" key={b.id}>
-                    <h2>{b.title}</h2>
-                    <h4>by {b.author}</h4>
-                    <p> <strong>Price:</strong>{b.price}</p>
+        <>
+            <div className="books-grid"> 
+                {currentBooks.map((b) => (
+                    <div className="book-card" key={b.id}>
+                        <h2>{b.title}</h2>
+                        <h4>by {b.author}</h4>
+                        <p> <strong>Price:</strong>{b.price}</p>
+                    
+                        {!isAdmin &&(
+                            <div className="book-actions">
+                                    <input type="number" min={1} value={cartQuantity[b.id] || 1} onChange={(e) => setCartQuantity({...cartQuantity, [b.id]: Number(e.target.value)})}/>
+                                    <button type="button" onClick={() => addToCart(user.id, {...b, quantity: cartQuantity[b.id] || 1})}>cart</button>
+                                <button type="button" onClick={() => addToFavorite(user.id, b) }> fav</button>
+                            </div>
+                        )
+                        }
+                    </div>
+                ))
                 
-                    {!isAdmin &&(
-                        <div className="book-actions">
-                                <input type="number" min={1} value={cartQuantity[b.id] || 1} onChange={(e) => setCartQuantity({...cartQuantity, [b.id]: Number(e.target.value)})}/>
-                                <button type="button" onClick={() => addToCart(user.id, {...b, quantity: cartQuantity[b.id] || 1})}>cart</button>
-                            <button type="button" onClick={() => addToFavorite(user.id, b) }> fav</button>
-                        </div>
-                    )
-                    }
+                }
+            </div>
+
+            {/* Pagination dots */}
+                <div className="pagination">
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index}
+                            className={currentPage === index + 1 ? "active-dot" : ""}
+                            onClick={() => setCurrentPage(index + 1)}
+                        >
+                            ●
+                        </button>
+                    ))}
                 </div>
-            ))
-            
-            }
-        </div>
+        </>
        )
     }
 
@@ -75,6 +102,7 @@ export default function Books(){
                     onClick={() => {
                         setFoundBook(null);
                         setmessage("");
+                        setCurrentPage(1);
                     }}
                 >
                     Show All Books

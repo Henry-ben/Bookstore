@@ -81,9 +81,8 @@ export default function Dashboard(){
         order => order.status === "Paid"
     ).length;
 
-    const recentOrders = [...filteredOrders].sort(
-        (a,b) => b.id - a.id
-    );
+    const recentOrders = [...filteredOrders]
+    .sort( (a,b) => b.id - a.id);
 
     const processingOrders = orders.filter(
         order => order.status === "Processing"

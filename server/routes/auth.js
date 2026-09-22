@@ -1,12 +1,14 @@
 import express from "express";
-import { registerUser, loginUser, updateProfile, getCart, addToCart, removeFromCart, clearCart, getFavoriteBooks, addToFavorite, removeFromFavorite} from "../controllers/authController.js";
+import { registerUser, loginUser, updateProfile,profileImage, getCart, addToCart, removeFromCart, clearCart, getFavoriteBooks, addToFavorite, removeFromFavorite} from "../controllers/authController.js";
 import { authenticateToken } from "../middleware/authMiddleware.js";
+import upload from "../middleware/upload.js";
 
 const authRouter = express.Router();
 
 authRouter.post("/register", registerUser);
 authRouter.post("/login", loginUser);
 authRouter.put("/profile/:id",authenticateToken, updateProfile);
+authRouter.put("/profile/:id/image", authenticateToken, upload.single("image"), profileImage);
 
 authRouter.get("/cart/:id", authenticateToken, getCart);
 authRouter.post("/cart/:id", authenticateToken, addToCart);

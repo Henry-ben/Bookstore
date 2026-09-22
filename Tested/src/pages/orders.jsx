@@ -7,8 +7,19 @@ import "../css/order.css"
 export default function Order(){
 
     const [orders, setOrders] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ordersPerPage = 6;
 
     const apiUrl= import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+       const totalPages = Math.ceil(orders.length / ordersPerPage);
+
+        const startIndex = (currentPage - 1) * ordersPerPage;
+
+        const currentOrders = orders.slice(
+            startIndex,
+            startIndex + ordersPerPage
+        );
 
      async function fetchOrders() {
         try{
@@ -26,6 +37,7 @@ export default function Order(){
                 console.error("Error fetching orders:", error);
             }
     }
+
     useEffect(() => {
         fetchOrders();
     }, []);
@@ -49,48 +61,67 @@ export default function Order(){
                 </div>
             ) : (
                 <div className="orders-list">
-                    {orders.map(order => (
-                        <div key={order.id} className="order-card">
-                            <div className="order-card-header">
-                                <div>
-                                <h4>Order #{order.id}</h4>
-                                <p>Customer: {order.customerName}</p>
+                    {currentOrders.map(order => (
+                        <>
+                            <div key={order.id} className="order-card">
+                                <div className="order-card-header">
+                                    <div>
+                                    <h4>Order #{order.id}</h4>
+                                    <p>Customer: {order.customerName}</p>
+                                    </div>
+                                    <span className="order-status">{order.status}</span>
                                 </div>
-                                <span className="order-status">{order.status}</span>
+                                
+                                <div className="order-date">
+                                    <span>Date</span>
+                                    <p>{order.date}</p>
+                                </div>
+                                <details className="order-books">
+
+                                    <summary>
+                                        Books to Package ({order.books.length})
+                                    </summary>
+
+                                    <div className="books-list">
+
+                                        {order.books.map((book) => (
+
+                                            <div className="ordered-book" key={book.id}>
+
+                                                <p className="book-name">
+                                                    {book.title}
+                                                </p>
+
+                                                <p className="book-quantity">
+                                                    Quantity: <strong>{book.quantity}</strong>
+                                                </p>
+
+                                            </div>
+
+                                        ))}
+
+                                    </div>
+
+                                </details>
                             </div>
-                            
-                            <div className="order-date">
-                                <span>Date</span>
-                                <p>{order.date}</p>
-                            </div>
-                            <details className="order-books">
-
-                                <summary>
-                                    Books to Package ({order.books.length})
-                                </summary>
-
-                                <div className="books-list">
-
-                                    {order.books.map((book) => (
-
-                                        <div className="ordered-book" key={book.id}>
-
-                                            <p className="book-name">
-                                                {book.title}
-                                            </p>
-
-                                            <p className="book-quantity">
-                                                Quantity: <strong>{book.quantity}</strong>
-                                            </p>
-
-                                        </div>
-
+                            {totalPages > 1 && (
+                                <div className="pagination">
+                                    {Array.from({ length: totalPages }, (_, index) => (
+                                        <button
+                                            key={index}
+                                            className={
+                                                currentPage === index + 1
+                                                    ? "active-dot"
+                                                    : ""
+                                            }
+                                            onClick={() => setCurrentPage(index + 1)}
+                                        >
+                                            ●
+                                        </button>
                                     ))}
-
                                 </div>
-
-                            </details>
-                        </div>
+                            )}
+                        </>
                     ))}
                 </div>
             )}

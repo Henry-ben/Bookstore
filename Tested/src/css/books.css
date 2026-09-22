@@ -140,6 +140,25 @@
     color: #fff;
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 25px 0;
+}
+
+.pagination button {
+    border: none;
+    background: none;
+    font-size: 18px;
+    color: #ccc;
+    cursor: pointer;
+    padding: 0;
+}
+
+.pagination button.active-dot {
+    color: #f59e0b;
+}
 
 .found-book{
     width: 100%;

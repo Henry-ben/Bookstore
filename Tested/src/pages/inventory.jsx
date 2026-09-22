@@ -12,6 +12,8 @@ export default function Inventory(){
     const [message, setMessage] = useState("");
     const [price, setPrice] = useState(0)
     const [showForm, setShowform] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const booksPerPage = 6;
 
 
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -64,29 +66,28 @@ export default function Inventory(){
         }
     };
      
-    const editBook = (index) => {
-        const bookToEdit = inventory[index];
+    const editBook = (book) => {
+        const bookToEdit = book;
         setTitle(bookToEdit.title);
 
         setGenre(bookToEdit.genre);
         setSummary(bookToEdit.summary);
         setAuthor(bookToEdit.author);
-        setEditIndex(index);
+        setEditIndex(inventory.findIndex((b) => b.id === book.id));
         setPrice(bookToEdit.price)
         setShowform(true);
 
     }
 
-    const deleteBook = async (index) => {
+    const deleteBook = async (book) => {
         // Implement delete functionality here
         try {
-            const bookToDelete = inventory[index];
-            await axios.delete(`${apiUrl}/api/books/${bookToDelete.id}`, {
+            await axios.delete(`${apiUrl}/api/books/${book.id}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("currentToken")}`
                 }
             });
-            const updatedInventory = inventory.filter((_, i) => i !== index);
+            const updatedInventory = inventory.filter((b) => b.id !== book.id);
             setInventory(updatedInventory);
         } catch (error) {
             console.error("Error deleting book:", error);
@@ -105,6 +106,14 @@ export default function Inventory(){
         }
 
     }
+    const totalPages = Math.ceil(inventory.length / booksPerPage);
+
+    const startIndex = (currentPage - 1) * booksPerPage;
+
+    const currentBooks = inventory.slice(
+        startIndex,
+        startIndex + booksPerPage
+    );
  async function fetchInventory() {
         try {
             const response = await axios.get(`${apiUrl}/api/books`);
@@ -118,6 +127,14 @@ export default function Inventory(){
     useEffect(() => {
         fetchInventory();
     }, []);
+
+    useEffect(() => {
+    const totalPages = Math.ceil(inventory.length / booksPerPage);
+
+    if (currentPage > totalPages && totalPages > 0) {
+        setCurrentPage(totalPages);
+    }
+    }, [inventory, currentPage]);
 
     return(
         <div className="inventory-page">
@@ -175,26 +192,45 @@ export default function Inventory(){
             <div className="inventory-list">
                 {/* Display inventory or other relevant information here */
                  inventory.length > 0 ? (
-                    <ul>
-                        {inventory.map((book, index) => (
-                            <li className="inventory-card" key={book.id}>
-                                <h3>{book.title}</h3>
-                                <p><strong>Genre:</strong> {book.genre}</p>
-                                <div className="summary">
-                                    <strong>Summary:</strong>
-                                    <p>{book.summary}</p>
-                                </div>
-                                <p><strong>Author:</strong> {book.author}</p>
-                                <p className="price">
-                                    <strong>Price:</strong> ₦{Number(book.price).toFixed(2)}
-                                </p>
-                                <div className="book-button">
-                                    <button className="edit" onClick={() => editBook(index)}> Edit </button>
-                                    <button className="delete" onClick={() => deleteBook(index)}> Delete </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    <>
+                        <ul>
+                            {currentBooks.map((book, index) => (
+                                <li className="inventory-card" key={book.id}>
+                                    <h3>{book.title}</h3>
+                                    <p><strong>Genre:</strong> {book.genre}</p>
+                                    <div className="summary">
+                                        <strong>Summary:</strong>
+                                        <p>{book.summary}</p>
+                                    </div>
+                                    <p><strong>Author:</strong> {book.author}</p>
+                                    <p className="price">
+                                        <strong>Price:</strong> ₦{Number(book.price).toFixed(2)}
+                                    </p>
+                                    <div className="book-button">
+                                        <button className="edit" onClick={() => editBook(book)}> Edit </button>
+                                        <button className="delete" onClick={() => deleteBook(book)}> Delete </button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                        {totalPages > 1 && (
+                            <div className="pagination">
+                                {Array.from({ length: totalPages }, (_, index) => (
+                                    <button
+                                        key={index}
+                                        className={
+                                            currentPage === index + 1
+                                                ? "active-dot"
+                                                : ""
+                                        }
+                                        onClick={() => setCurrentPage(index + 1)}
+                                    >
+                                        ●
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </>
                 ) : (
                     <p className="empty-inventory">No books in inventory.</p>
                 )}

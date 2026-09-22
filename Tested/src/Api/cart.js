@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/cart` : 'http://localhost:5000/api/cart';
+const BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/auth/cart` : 'http://localhost:5000/api/auth/cart';
 
 export async function getCart(userId) {
     try {

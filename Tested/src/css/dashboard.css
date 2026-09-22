@@ -177,7 +177,27 @@
     font-size: 12px;
 }
 
+.orders {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 15px;
+}
 
+.order {
+    flex: 0 0 calc(50% - 10px);
+    scroll-snap-align: start;
+}
+
+.orders::-webkit-scrollbar {
+    height: 6px;
+}
+
+.orders::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
 /* Orders */
 
 .orders{

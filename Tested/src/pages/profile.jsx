@@ -16,6 +16,9 @@ export default function Profile(){
 
     const [showProfileModal, setShowProfileModal] = useState(false);
 
+    const [profileImage, setProfileImage] = useState(user?.profileImage || "");
+    const [uploadingImage, setUploadingImage] = useState(false);
+
     const [name, setName] = useState(user?.name || "");
     const [email, setEmail] = useState(user?.email || "");
     const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
@@ -43,6 +46,54 @@ export default function Profile(){
             console.error(error);
         }
     }
+
+    async function uploadImage(e) {
+    const file = e.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+        setUploadingImage(true);
+
+        const response = await axios.put(
+            `${apiUrl}/api/auth/profile/${user.id}/image`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("currentToken")}`
+                }
+            }
+        );
+
+        const updatedUser = response.data.user;
+
+        localStorage.setItem(
+            "currentUser",
+            JSON.stringify(updatedUser)
+        );
+
+        setUser(updatedUser);
+        setProfileImage(updatedUser.profileImage);
+
+        alert("Profile image updated successfully!");
+
+    } catch (error) {
+        console.error("Error uploading profile image:", error);
+        console.log(error.response?.data);
+
+        alert(
+            error.response?.data?.message ||
+            "Unable to upload profile image."
+        );
+    } finally {
+        setUploadingImage(false);
+    }
+ }
     async function saveSettings() {
         try{await axios.put(
                 `${apiUrl}/api/settings`,
@@ -118,8 +169,25 @@ function closeProfileModal() {
 
                 <section>
                     <div className="avatar">
-                        <p>profile image</p>
+                        {profileImage ? (
+                            <img src={profileImage} alt="Profile" />
+                        ) : (
+                            <p>profile image</p>
+                        )}
                     </div>
+
+                    {user && (
+                        <div className="image-upload">
+                            <label htmlFor="profile-image">{uploadingImage ? "Uploading..." : "Change Image"}</label>
+                            <input
+                                type="file"
+                                id="profile-image"
+                                accept="image/*"
+                                onChange={uploadImage}
+                                disabled={uploadingImage}
+                            />
+                        </div>
+                    )}
                     <p>{user ? user.name : "Guest"}</p>
                     {user &&(
                         <button className="edit-btn" onClick={() => setShowProfileModal(true)}>

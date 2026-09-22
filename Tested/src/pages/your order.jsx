@@ -12,11 +12,27 @@ export default function Yourorder(){
     const [cartBooks, setCartBooks] = useState([]);
     const [orders, setOrders] = useState([]);
 
+    const[cartPage, setCartPage] = useState(1);
+    const [ordersPage, setOrdersPage] = useState(1);
+
+    const booksPerPage = 4;
+    const ordersPerPage = 4;
+
     if(!currentUser){
         return<p>Please login</p>
     }
 
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+    const cartStartIndex = (cartPage - 1) * booksPerPage; 
+    const cartEndIndex = cartStartIndex + booksPerPage; 
+    const currentCartBooks = cartBooks.slice( cartStartIndex, cartEndIndex ); 
+    const totalCartPages = Math.ceil( cartBooks.length / booksPerPage );
+
+    const orderStartIndex = (ordersPage - 1) * ordersPerPage; 
+    const orderEndIndex = orderStartIndex + ordersPerPage; 
+    const currentOrders = orders.slice( orderStartIndex, orderEndIndex ); 
+    const totalOrderPages = Math.ceil( orders.length / ordersPerPage );
 
 
     async function download(order) {
@@ -222,6 +238,10 @@ export default function Yourorder(){
             );
 
             setCartBooks(updatedCart);
+
+            const newTotalPages = Math.ceil( updatedCart.length / booksPerPage ); 
+            if ( newTotalPages === 0 ) { setCartPage(1); } 
+            else if ( cartPage > newTotalPages ) { setCartPage( newTotalPages ); }
         } catch (error) {
             console.error("Error removing book:", error);
         }
@@ -312,6 +332,7 @@ export default function Yourorder(){
 
                         await clearCart(currentUser.id);
                         setCartBooks([]);
+                        setCartPage(1);
                         fetchOrders();
                     }
                 } 
@@ -354,7 +375,7 @@ export default function Yourorder(){
                         (<p className="empty-message">No book added to cart</p>):
                         (<>
                         <ul className="cart-list">
-                            {cartBooks.map((books) => (
+                            {currentCartBooks.map((books) => (
                                     <li className="cart-item" key={books.id}>
                                         
                                         <button type="button" 
@@ -370,6 +391,20 @@ export default function Yourorder(){
                                     </li>
                                 ))}
                         </ul>
+                        {/* CART PAGINATION */} 
+                        {totalCartPages > 1 && ( 
+                            <div className="pagination"> 
+                                <button type="button" onClick={() => setCartPage( cartPage - 1 ) } disabled={ cartPage === 1 } > ‹ </button> 
+                                <div className="pagination-dots"> 
+                                    {Array.from({ length: totalCartPages }).map( (_, index) => ( 
+                                        <button key={index} type="button" className={ cartPage === index + 1 ? "active-dot" : "" } onClick={() => setCartPage( index + 1 ) } > ● </button> 
+                                        ) )} 
+                                </div> 
+                                <button type="button" onClick={() =>         setCartPage( cartPage + 1 ) }     disabled={ cartPage === totalCartPages } >
+                                    › 
+                                </button> 
+                            </div> 
+                        )}
                         </>
                         )
                         }
@@ -397,7 +432,7 @@ export default function Yourorder(){
                         (<p className="empty-message">No order placed yet</p>):
                         (<>
                             <ul className="order-list"> 
-                                {orders.map((order) => (
+                                {currentOrders.map((order) => (
                                     <li className="order-card" key={order.id}>
                                         <div className="order-head">
                                           <div>
@@ -440,6 +475,18 @@ export default function Yourorder(){
                                     </li>
                                 ))}
                             </ul>
+
+                            {/* ORDER PAGINATION */} 
+                            {totalOrderPages > 1 && ( 
+                                <div className="pagination"> 
+                                <button type="button" onClick={() =>   setOrdersPage( ordersPage - 1 ) }     disabled={ ordersPage === 1 } > 
+                                    ‹ 
+                                    </button> 
+                                    <div className="pagination-dots"> {Array.from({ length: totalOrderPages }).map( (_, index) => ( 
+                                        <button key={index} type="button" className={ ordersPage === index + 1 ? "active-dot" : "" } onClick={() => setOrdersPage( index + 1 ) } > ● </button> ) )} 
+                                    </div> 
+                                    <button type="button" onClick={() => setOrdersPage( ordersPage + 1 ) } disabled={ ordersPage === totalOrderPages } > › </button> 
+                                    </div> )}
                         </>
                         )
                         }
