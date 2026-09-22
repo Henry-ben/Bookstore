@@ -177,6 +177,12 @@ export async function registerUser(req, res) {
 
             const userId = req.params.id;
 
+            const oldUser = await pool.query(
+                "SELECT profile_image from users where id = $1",[userId]
+            );
+
+            const oldImageUrl = oldUser.rows[0].profile_image;
+
             const fileExtension = req.file.originalname.split('.').pop();
 
             const fileName = `profile_${userId}_${Date.now()}.${fileExtension}`;
@@ -211,6 +217,29 @@ export async function registerUser(req, res) {
                 }
 
                 const user = result.rows[0];
+
+                if(oldImageUrl){
+                    try{
+                        const oldFileName = oldImageUrl.split("/").pop();
+
+                        console.log("OLD IMAGE URL:", oldImageUrl);
+                        console.log("OLD FILE NAME:", oldFileName)
+
+                        if(oldFileName){
+                            const {error: deleteError} = await supabase.storage
+                            .from("profile_image")
+                            .remove([oldFileName]);
+
+                            if(deleteError){
+                                console.error(
+                                    "Error deleting old profile image", deleteError
+                                );
+                            }
+                        }
+                    }catch(deleteError){
+                        console.error("Error deleting old profile image", deleteError);
+                    }
+                }
                 res.json({ 
                     message: "Profile image updated successfully",
                     user: {
