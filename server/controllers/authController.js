@@ -134,7 +134,7 @@ export async function registerUser(req, res) {
             const fileName = `profile_${userId}.${fileExtension}`;
 
             const{error: uploadError} = await supabase.storage
-                .from('profile-images')
+                .from('profile_images')
                 .upload(fileName, req.file.buffer, {
                     contentType: req.file.mimetype,
                     upsert: true
