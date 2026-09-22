@@ -120,6 +120,35 @@ export default function Profile(){
 
 }
 
+async function loadProfile() {
+    try {
+        const response = await axios.get(
+            `${apiUrl}/api/auth/profile/${user.id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("currentToken")}`
+                }
+            }
+        );
+
+        const updatedUser = response.data.user;
+
+        localStorage.setItem(
+            "currentUser",
+            JSON.stringify(updatedUser)
+        );
+
+        setUser(updatedUser);
+        setProfileImage(updatedUser.profileImage || "");
+        setName(updatedUser.name || "");
+        setEmail(updatedUser.email || "");
+        setPhoneNumber(updatedUser.phoneNumber || "");
+
+    } catch (error) {
+        console.error("Error loading profile:", error);
+    }
+}
+
 async function saveProfile() {
     try {
         const response = await axios.put(
@@ -161,7 +190,8 @@ function closeProfileModal() {
 }
     useEffect(() => {
         if(isAdmin){loadSettings()};
-    }, [isAdmin]);
+        if(user){loadProfile()}
+    }, []);
     return(
         <div className="profile-page">
            <div className="profile-card">

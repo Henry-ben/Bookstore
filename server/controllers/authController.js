@@ -67,6 +67,54 @@ export async function registerUser(req, res) {
             res.status(500).json({ message: "Server error" });
         }
     }
+
+    export async function getProfile(req, res) {
+    try {
+        if (String(req.user.id) !== String(req.params.id)) {
+            return res.status(403).json({
+                message: "Access denied"
+            });
+        }
+
+        const result = await pool.query(`
+            SELECT
+                id,
+                name,
+                email,
+                phone_number,
+                role,
+                profile_image
+            FROM users
+            WHERE id = $1
+        `, [req.params.id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        const user = result.rows[0];
+
+        res.json({
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                phoneNumber: user.phone_number,
+                role: user.role,
+                profileImage: user.profile_image
+            }
+        });
+
+    } catch (error) {
+        console.error("Error getting profile:", error);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+    }
+}
     //update user profile
     export async function updateProfile(req, res) {
         try {
@@ -83,7 +131,7 @@ export async function registerUser(req, res) {
                 UPDATE users
                 SET name = $1, email = $2, phone_number = $3
                 WHERE id = $4
-                RETURNING id, name, email, phone_number AS "phoneNumber", role, profile_image
+                RETURNING id, name, email, phone_number, role, profile_image
             `, [name, email, phoneNumber, req.params.id]);
 
             if (result.rows.length === 0) {
@@ -171,7 +219,7 @@ export async function registerUser(req, res) {
                         email: user.email,
                         phoneNumber: user.phoneNumber,
                         role: user.role,
-                        profileImageUrl: user.profile_image
+                        profileImage: user.profile_image
                     }
                  });
         }catch (error) {
