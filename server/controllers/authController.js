@@ -222,8 +222,7 @@ export async function registerUser(req, res) {
                     try{
                         const oldFileName = oldImageUrl.split("/").pop();
 
-                        console.log("OLD IMAGE URL:", oldImageUrl);
-                        console.log("OLD FILE NAME:", oldFileName)
+                        
 
                         if(oldFileName){
                             const {error: deleteError} = await supabase.storage
