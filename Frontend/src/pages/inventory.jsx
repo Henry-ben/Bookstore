@@ -9,6 +9,7 @@ export default function Inventory(){
     const [author, setAuthor] = useState("");
     const [inventory, setInventory] = useState([]);
     const [editIndex, setEditIndex] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
     const [message, setMessage] = useState("");
     const [price, setPrice] = useState(0)
     const [showForm, setShowform] = useState(false);
@@ -20,19 +21,22 @@ export default function Inventory(){
 
     const handleAddBook = async (e) => {
         e.preventDefault();
-        const bookData = {
-            title,
-            genre,
-            summary,
-            author,
-            price
-        };
-        
+        const formData = new FormData();
 
+        formData.append("title", title);
+        formData.append("genre", genre);
+        formData.append("summary", summary);
+        formData.append("author", author);
+        formData.append("price", price);
+
+        if(imageFile){
+            formData.append("image", imageFile);
+        }
+        
         try {
             if(editIndex !== null){
                 const bookId = inventory[editIndex].id;
-                const response = await axios.put(`${apiUrl}/api/books/${bookId}`, bookData, {
+                const response = await axios.put(`${apiUrl}/api/books/${bookId}`, formData, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("currentToken")}`
                     }
@@ -43,12 +47,12 @@ export default function Inventory(){
                 setInventory(updatedInventory);
                 setMessage("Book updated successfully");
             }else{
-                const response = await axios.post(`${apiUrl}/api/books/add`, bookData, {
+                const response = await axios.post(`${apiUrl}/api/books/add`, formData, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("currentToken")}`
                     }
                 });
-                setInventory([...inventory, response.data]);
+                setInventory([...inventory, response.data.book]);
             }
 
             setMessage("");
@@ -57,6 +61,7 @@ export default function Inventory(){
             setSummary("");
             setAuthor("");
             setPrice(0);
+            setImageFile(null)
             setEditIndex(null);
             setShowform(false);
         }catch (error) {
@@ -73,11 +78,56 @@ export default function Inventory(){
         setGenre(bookToEdit.genre);
         setSummary(bookToEdit.summary);
         setAuthor(bookToEdit.author);
-        setEditIndex(inventory.findIndex((b) => b.id === book.id));
         setPrice(bookToEdit.price)
+        setImageFile(null);
+        setEditIndex(inventory.findIndex((b) => b.id === book.id));
         setShowform(true);
 
     }
+
+    const  uploadBookImage = async (book, e) => {
+        const file = e.target.files[0];
+
+        if(!file){
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try{
+            setUploadingImage(true);
+
+            const response = await axios.put(
+                `${apiUrl}/api/books/${book.id}/image`, formData,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("currentToken")}`
+                    }
+                }
+            );
+
+            const updatedBook = response.data.book;
+
+            setInventory(prevInventory =>
+                prevInventory.map(item =>
+                    item.id === updatedBook.id ? updatedBook : item
+                )
+            );
+
+            setMessage("Book image update successfully");
+        } catch(error) {
+            console.error("Error uploading book image:", error);
+            console.log(error.response?.data);
+
+            setMessage(
+                error.response?.data?.message || "Unable to upload book image."
+            );
+        } finally {
+            setUploadingImage(false);
+
+            e.target.value = "";
+        }
+    };
 
     const deleteBook = async (book) => {
         // Implement delete functionality here
@@ -162,6 +212,9 @@ export default function Inventory(){
 
                             <label>Price</label>
                             <input type="number" placeholder="enter the price" value={price} onChange={(e) => setPrice(Number(e.target.value))} required/>
+
+                            <label>Book Image</label>
+                            <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])}/>
                             {message && <p className="form-message">{message}</p>}
                             <div className="form-button">
                                 <button className="save-btn" type="submit" onClick={handleAddBook}>{editIndex !== null ? "Update Book" : "Add Book"} </button>
@@ -184,6 +237,7 @@ export default function Inventory(){
                 setAuthor("");
                 setPrice(0);
                 setEditIndex(null);
+                setImageFile(null);
                 setShowform(true);
              }}
             >
@@ -195,7 +249,10 @@ export default function Inventory(){
                     <>
                         <ul>
                             {currentBooks.map((book, index) => (
-                                <li className="inventory-card" key={book.id}>
+                                <li className="inventory-card" key={book.id}> 
+                                    {book.book_image && (
+                                        <img src={book.book_image} alt={book.title} className="book-image" />
+                                    )}
                                     <h3>{book.title}</h3>
                                     <p><strong>Genre:</strong> {book.genre}</p>
                                     <div className="summary">
@@ -209,6 +266,7 @@ export default function Inventory(){
                                     <div className="book-button">
                                         <button className="edit" onClick={() => editBook(book)}> Edit </button>
                                         <button className="delete" onClick={() => deleteBook(book)}> Delete </button>
+
                                     </div>
                                 </li>
                             ))}
