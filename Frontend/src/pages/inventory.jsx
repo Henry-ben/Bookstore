@@ -83,50 +83,6 @@ export default function Inventory(){
         setEditIndex(inventory.findIndex((b) => b.id === book.id));
         setShowform(true);
 
-    }
-
-    const  uploadBookImage = async (book, e) => {
-        const file = e.target.files[0];
-
-        if(!file){
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("image", file);
-
-        try{
-            setUploadingImage(true);
-
-            const response = await axios.put(
-                `${apiUrl}/api/books/${book.id}/image`, formData,{
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("currentToken")}`
-                    }
-                }
-            );
-
-            const updatedBook = response.data.book;
-
-            setInventory(prevInventory =>
-                prevInventory.map(item =>
-                    item.id === updatedBook.id ? updatedBook : item
-                )
-            );
-
-            setMessage("Book image update successfully");
-        } catch(error) {
-            console.error("Error uploading book image:", error);
-            console.log(error.response?.data);
-
-            setMessage(
-                error.response?.data?.message || "Unable to upload book image."
-            );
-        } finally {
-            setUploadingImage(false);
-
-            e.target.value = "";
-        }
     };
 
     const deleteBook = async (book) => {

@@ -50,7 +50,7 @@ export async function addBooks(req, res) {
                 RETURNING *
                 `, [imageUrl, newBook.id]);
 
-            newBook = updatedBook.rows[0];
+            newBook = result.rows[0];
         }
         //automatically add the new book to announcements
         await createAnnouncement(newBook);
@@ -108,7 +108,7 @@ export async function deleteBook(req, res) {
                 if (oldFileName) {
                     const { error: deleteError } =
                         await supabase.storage
-                            .from("book-images")
+                            .from("book_image")
                             .remove([oldFileName]);
 
                     if (deleteError) {
@@ -172,7 +172,7 @@ export async function updateBook(req, res) {
 
             const fileName = `book_${id}_${Date.now()}.${fileExtension}`;
             const { error: uploadError } = await supabase.storage
-                .from("book-images")
+                .from("book_image")
                 .upload(
                     fileName,
                     req.file.buffer,
@@ -193,7 +193,7 @@ export async function updateBook(req, res) {
                 });
             }
             const { data } = supabase.storage
-                .from("book-images")
+                .from("book_image")
                 .getPublicUrl(fileName);
 
             imageUrl = data.publicUrl;
@@ -216,7 +216,7 @@ export async function updateBook(req, res) {
                 if (oldFileName) {
                     const { error: deleteError } =
                         await supabase.storage
-                            .from("book-images")
+                            .from("book_image")
                             .remove([oldFileName]);
 
                     if (deleteError) {
