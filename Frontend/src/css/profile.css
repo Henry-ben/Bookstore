@@ -62,6 +62,14 @@
     margin-bottom: 18px;
 }
 
+.delete-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
 .edit-btn{
     padding: 10px 18px;
     background: #F59E0B;

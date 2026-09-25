@@ -560,3 +560,94 @@ export async function registerUser(req, res) {
             res.status(500).json({ message: "Server error" });
         }
     }
+
+export async function deleteAccount(req, res) {
+    try {
+        const userId = req.params.id;
+
+        // Make sure the logged-in user is deleting their own account
+        if (String(req.user.id) !== String(userId)) {
+            return res.status(403).json({
+                message: "Access denied"
+            });
+        }
+
+        // Get profile image before deleting the user
+        const userResult = await pool.query(
+            `SELECT profile_image
+             FROM users
+             WHERE id = $1`,
+            [userId]
+        );
+
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        const profileImageUrl = userResult.rows[0].profile_image;
+
+        // Delete cart items
+        await pool.query(
+            `DELETE FROM cart_items
+             WHERE user_id = $1`,
+            [userId]
+        );
+
+        // Delete favorites
+        await pool.query(
+            `DELETE FROM favorites
+             WHERE user_id = $1`,
+            [userId]
+        );
+
+        // IMPORTANT:
+        // We DO NOT delete orders.
+        // We DO NOT delete order_items.
+
+        // Delete the user
+        await pool.query(
+            `DELETE FROM users
+             WHERE id = $1`,
+            [userId]
+        );
+
+        // Delete profile image from Supabase Storage
+        if (profileImageUrl) {
+            try {
+                const oldFileName = profileImageUrl.split("/").pop();
+
+                if (oldFileName) {
+                    const { error: deleteImageError } =
+                        await supabase.storage
+                            .from("profile_image")
+                            .remove([oldFileName]);
+
+                    if (deleteImageError) {
+                        console.error(
+                            "Error deleting profile image:",
+                            deleteImageError
+                        );
+                    }
+                }
+            } catch (imageError) {
+                console.error(
+                    "Error deleting profile image:",
+                    imageError
+                );
+            }
+        }
+
+        res.json({
+            message: "Account deleted successfully"
+        });
+
+    } catch (error) {
+        console.error("Error deleting account:", error);
+
+        res.status(500).json({
+            message: "Failed to delete account"
+        });
+    }
+}

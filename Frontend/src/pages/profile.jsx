@@ -116,8 +116,8 @@ export default function Profile(){
             alert("Unable to save")
             
         }
-
-
+    
+    
 }
 
 async function loadProfile() {
@@ -148,6 +148,42 @@ async function loadProfile() {
         console.error("Error loading profile:", error);
     }
 }
+
+const deleteAccount = async () => {
+    const confirmed = window.confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        await axios.delete(
+            `${apiUrl}/api/auth/profile/${user.id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("currentToken")}`
+                }
+            }
+        );
+
+        // Remove saved login information
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("currentToken");
+
+        // Send user back to landing page
+        navigate("/");
+
+    } catch (error) {
+        console.error("Error deleting account:", error);
+
+        alert(
+            error.response?.data?.message ||
+            "Failed to delete account"
+        );
+    }
+};
 
 async function saveProfile() {
     try {
@@ -255,17 +291,28 @@ function closeProfileModal() {
                     <button onClick={() => navigate("/home")}>Announcement</button>
                 </section>
             )}
-            <section className="logout-box">
-                        <button
-                            className="logout-btn"
-                            onClick={() => {
-                                localStorage.removeItem("currentUser");
-                                localStorage.removeItem("currentToken");
-                                navigate("/");
-                            }}
-                        >
-                            Logout
-                        </button>
+           <section className="logout-box">
+
+            {user && (
+                    <button
+                        className="delete-btn"
+                        onClick={deleteAccount}
+                    >
+                        Delete Account
+                    </button>
+            )}
+
+                <button
+                    className="logout-btn"
+                    onClick={() => {
+                        localStorage.removeItem("currentUser");
+                        localStorage.removeItem("currentToken");
+                        navigate("/");
+                    }}
+                >
+                    Logout
+                </button>
+
             </section>
             {showProfileModal && (
                 <div className="modal">

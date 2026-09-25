@@ -9,6 +9,7 @@ function Logsign(){
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [role, setRole] = useState("");
 
 
@@ -32,9 +33,13 @@ function Logsign(){
             <br/>
             <br/>
 
-            <div className="form-group">
+            <div className="pass-box">
                 <label>Password : </label>
-                <input type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required/>
+                <input type={showPassword ? "text" : "password"} value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required/>
+
+                <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? "Hide" : "Show"}
+                </button>
             </div>
 
             <br/>
@@ -73,9 +78,14 @@ function Logsign(){
             <br/>
             <br/>
 
-            <div className="form-group">
+            <div className="pass-box">
                 <label>Password : </label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
+                <input type={ showPassword ?  "text": "password"} value={password} onChange={(e) => setPassword(e.target.value)} required/>
+
+                <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? "Hide": "Show"}
+                </button>
+
             </div>
 
             <br/>
