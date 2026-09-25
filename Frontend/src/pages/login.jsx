@@ -1,5 +1,6 @@
 import { useState  } from "react";
 import {useNavigate} from "react-router-dom";
+import {Eye, EyeOff} from "lucide-react"
 import"../css/login.css"
 import axios from "axios";
 
@@ -38,7 +39,7 @@ function Logsign(){
                 <input type={showPassword ? "text" : "password"} value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required/>
 
                 <button type="button" onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? "Hide" : "Show"}
+                    {showPassword ? <EyeOff size={20}/> : <Eye size={20}/>}
                 </button>
             </div>
 
@@ -83,7 +84,7 @@ function Logsign(){
                 <input type={ showPassword ?  "text": "password"} value={password} onChange={(e) => setPassword(e.target.value)} required/>
 
                 <button type="button" onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? "Hide": "Show"}
+                    {showPassword ? <EyeOff size={20}/>: <Eye size={20}/>}
                 </button>
 
             </div>

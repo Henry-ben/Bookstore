@@ -176,18 +176,48 @@
 
 .pass-box {
     display: flex;
-    align-items: center;
+    margin-bottom: 17px;
+    flex-direction: column;
 }
 
-.pass-box input {
-    flex: 1;
+.pass-box label {
+    margin-bottom: 7px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #374151;
 }
 
+.pass-box input,
+.pass-box select {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 13px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+
+    outline: none;
+
+    font-size: 15px;
+
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+.pass-box input:focus,
+.pass-box select:focus {
+    border-color: #1f2937;
+
+    box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.1);
+}
 .pass-box button {
     border: none;
     background: none;
+    margin-left: 85%;
+    margin-top: -30px;
     cursor: pointer;
-    margin-left: 8px;
+    
     font-weight: bold;
 }
 
@@ -271,4 +301,8 @@
     .auth-card {
         padding: 30px 25px;
     }
+
+    .pass-box button {
+    margin-left: 80%;
+}
 }

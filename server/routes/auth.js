@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser, updateProfile,profileImage, getCart, addToCart, removeFromCart, clearCart, getFavoriteBooks, addToFavorite, removeFromFavorite, getProfile} from "../controllers/authController.js";
+import { registerUser, loginUser, updateProfile,profileImage, getCart, addToCart, removeFromCart, clearCart, getFavoriteBooks, addToFavorite, removeFromFavorite, getProfile, deleteAccount} from "../controllers/authController.js";
 import { authenticateToken } from "../middleware/authMiddleware.js";
 import upload from "../middleware/upload.js";
 
@@ -10,6 +10,7 @@ authRouter.post("/login", loginUser);
 authRouter.get("/profile/:id", authenticateToken, getProfile);
 authRouter.put("/profile/:id",authenticateToken, updateProfile);
 authRouter.put("/profile/:id/image", authenticateToken, upload.single("image"), profileImage);
+authRouter.delete("/profile/:id", authenticateToken, deleteAccount);
 
 authRouter.get("/cart/:id", authenticateToken, getCart);
 authRouter.post("/cart/:id", authenticateToken, addToCart);
