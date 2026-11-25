@@ -1,0 +1,57 @@
+.inventory-skeleton .skeleton {
+    background: linear-gradient(
+        90deg,
+        #eee 25%,
+        #ddd 50%,
+        #eee 75%
+    );
+    background-size: 200% 100%;
+    animation: inventory-skeleton-loading 1.5s infinite;
+    border-radius: 6px;
+}
+
+.inventory-skeleton-image {
+    width: 100%;
+    height: 160px;
+    margin-bottom: 15px;
+}
+
+.inventory-skeleton-title {
+    width: 70%;
+    height: 22px;
+    margin-bottom: 15px;
+}
+
+.inventory-skeleton-text {
+    width: 85%;
+    height: 14px;
+    margin-bottom: 12px;
+}
+
+.inventory-skeleton-summary {
+    width: 100%;
+    height: 55px;
+    margin-bottom: 12px;
+}
+
+.inventory-skeleton-price {
+    width: 40%;
+    height: 18px;
+    margin-bottom: 15px;
+}
+
+.inventory-skeleton-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.inventory-skeleton-button {
+    width: 70px;
+    height: 32px;
+}
+
+@keyframes inventory-skeleton-loading {
+    to {
+        background-position: -200% 0;
+    }
+}

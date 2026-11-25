@@ -18,6 +18,7 @@ function Logsign(){
     const [loginPassword, setLoginPassword] = useState("");
 
     const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -46,7 +47,7 @@ function Logsign(){
             <br/>
             <br/>
 
-            <button className="submit-btn" type="submit"> Login </button>
+            <button className="submit-btn" type="submit" disabled={loading}> {loading ? "Logging in..." : "Login"} </button>
 
         </form>
     );
@@ -125,7 +126,7 @@ function Logsign(){
             <br/>
             <br/>
 
-            <button className="submit-btn" type="submit"> Sign In </button>
+            <button className="submit-btn" type="submit" disabled={loading}> {loading ? "Registering..." : "Sign In "}</button>
 
         </form>
 
@@ -136,6 +137,7 @@ function Logsign(){
         e.preventDefault();
 
         try {
+            setLoading(true);
                 const response = await axios.post(
                     `${apiUrl}/api/auth/login`,
                     {
@@ -155,10 +157,12 @@ function Logsign(){
                     navigate("/login");
                 }, 2 * 60 * 60 * 1000);
 
-
+                
                 navigate("/home"); // Navigate to home on successful login
          }catch (error) {
             setMessage(error.response?.data?.message || "Login failed");
+        }finally{
+            setLoading(false);
         }
     }
 
@@ -166,6 +170,7 @@ function Logsign(){
         e.preventDefault();
         
         try {
+             setLoading(true);
                 const response = await axios.post(
                     `${apiUrl}/api/auth/register`,
                 {
@@ -189,6 +194,8 @@ function Logsign(){
                 setPage("login")
             }catch (error) {
             setMessage(error.response?.data?.message || "Registration failed");
+        }finally{
+            setloading(false);
         }
     }
 

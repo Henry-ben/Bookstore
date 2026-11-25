@@ -1,0 +1,23 @@
+.order-skeleton {
+    list-style: none;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.order-skeleton-title {
+    width: 60%;
+    height: 20px;
+    margin-bottom: 15px;
+}
+
+.order-skeleton-text {
+    width: 85%;
+    height: 14px;
+    margin-bottom: 12px;
+}
+
+.order-skeleton-status {
+    width: 100px;
+    height: 25px;
+    margin-top: 10px;
+}

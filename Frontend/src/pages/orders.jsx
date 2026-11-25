@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AdOrderSkeleton from "../component/AdOrderSkeleton";
+import "../css/orderSkeleton.css";
 import "../css/order.css"
 
 
@@ -8,6 +10,7 @@ export default function Order(){
 
     const [orders, setOrders] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(true);
     const ordersPerPage = 6;
 
     const apiUrl= import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -35,6 +38,8 @@ export default function Order(){
                 setOrders(response.data);
             }catch(error){
                 console.error("Error fetching orders:", error);
+            }finally {
+                setLoading(false);
             }
     }
 
@@ -54,7 +59,13 @@ export default function Order(){
             </div>
 
 
-            {orders.length === 0 ? (
+            {loading ? (
+                <div className="orders-list">
+                    {Array.from({length: 4}).map((_, index) => (
+                        <AdOrderSkeleton/>
+                    ))}
+                </div>
+            ) : orders.length === 0 ? (
                 <div className="no-orders">
                    <h3>No Orders Found</h3>
                    <p>There are currently no orders.</p>

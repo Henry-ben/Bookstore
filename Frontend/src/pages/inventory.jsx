@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import InventorySkeleton from "../component/InventorySkeleton";
+import "../css/inventorySkeleton.css";
 import "../css/inventory.css"
 
 export default function Inventory(){
@@ -9,6 +11,7 @@ export default function Inventory(){
     const [author, setAuthor] = useState("");
     const [inventory, setInventory] = useState([]);
     const [editIndex, setEditIndex] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [imageFile, setImageFile] = useState(null);
     const [message, setMessage] = useState("");
     const [price, setPrice] = useState(0)
@@ -127,6 +130,8 @@ export default function Inventory(){
             setInventory(response.data);
         } catch (error) {
             console.error("Error fetching inventory:", error);
+        }finally {
+            setLoading(false);
         }
     }
 
@@ -201,7 +206,11 @@ export default function Inventory(){
             </button>
             <div className="inventory-list">
                 {/* Display inventory or other relevant information here */
-                 inventory.length > 0 ? (
+                 loading ? (
+                    <ul>
+                        {Array.from({length: 6}).map((_, index) => (<InventorySkeleton key={index} />))}
+                    </ul>
+                ) : inventory.length > 0 ? (
                     <>
                         <ul>
                             {currentBooks.map((book, index) => (

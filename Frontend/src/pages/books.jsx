@@ -3,11 +3,13 @@ import axios from "axios";
 import {addToCart} from "../Api/cart.js";
 import {addToFavorite} from "../Api/favorite.js";
 import"../css/books.css"
+import BookSkeleton from "../component/BookSkeleton.jsx";
 
 export default function Books(){
     const [message, setmessage] = useState("");
     const [foundBook, setFoundBook] = useState(null);
     const [book, setBook] = useState([]);
+    const [loading, setLoading] = useState(true);
     const[cartQuantity , setCartQuantity] = useState({})
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,6 +26,8 @@ export default function Books(){
             setBook(books.data);
         } catch (error) {
             console.error("Error fetching books:", error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -127,7 +131,15 @@ export default function Books(){
                     </div> 
                 </div>
             )}
-            {!foundBook && <DisplayBook/>}
+            {loading ? (
+                <div className="books-grid">
+                    {Array.from({ length: 6 }).map((_, index) => (
+                        <BookSkeleton key={index} />
+                    ))}
+                </div>
+            ) : (
+                !foundBook && <DisplayBook />
+            )}
             
         </div>
     );

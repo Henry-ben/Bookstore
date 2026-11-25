@@ -5,12 +5,18 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { getCart, removeFromCart, clearCart } from "../Api/cart.js";
 import "../css/yourorder.css"
+import CartSkeleton from "../component/CartSkeleton";
+import OrderSkeleton from "../component/OrderSkeleton";
+import "../css/orderSkeleton.css";
+import "../css/cartSkeleton.css";
 
 export default function Yourorder(){
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const [display, setDisplay] = useState("Cart");
     const [cartBooks, setCartBooks] = useState([]);
     const [orders, setOrders] = useState([]);
+    const [cartloading, setCartLoading] = useState(true);
+    const [ordersloading, setOrdersLoading] = useState(true);
 
     const[cartPage, setCartPage] = useState(1);
     const [ordersPage, setOrdersPage] = useState(1);
@@ -228,6 +234,8 @@ export default function Yourorder(){
             setOrders(response.data);
         } catch (error) {
             console.error("Error fetching orders:", error);
+        }finally {
+            setOrdersLoading(false);
         }
     }
     async function remove( bookId) {
@@ -286,6 +294,8 @@ export default function Yourorder(){
                 setCartBooks(Array.isArray(response) ? response : []);
             }catch (error) {
                 console.error("Error fetching cart books:", error);
+            }finally {
+                setCartLoading(false);
             }
         }
 
@@ -371,7 +381,11 @@ export default function Yourorder(){
                             <p>{cartBooks.length} books in cart</p>
                         </div>
                         
-                        {cartBooks.length === 0 ?
+                        {cartloading ? (
+                            <ul className="cart-list">
+                                {Array.from({length: 4}).map((_, index) => (<CartSkeleton key={index} />))}
+                            </ul>
+                        ) : cartBooks.length === 0 ?
                         (<p className="empty-message">No book added to cart</p>):
                         (<>
                         <ul className="cart-list">
@@ -428,7 +442,11 @@ export default function Yourorder(){
                         <div className="order-heading">
                             <h2>Your order is here</h2>
                         </div>
-                        {orders.length === 0 ?
+                        {ordersloading ? (
+                            <ul className="order-list">
+                                {Array.from({length: 4}).map((_, index) => (<OrderSkeleton key={index} />))}
+                            </ul>
+                        ) : orders.length === 0 ?
                         (<p className="empty-message">No order placed yet</p>):
                         (<>
                             <ul className="order-list"> 

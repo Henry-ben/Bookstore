@@ -1,0 +1,49 @@
+.order-skeleton .skeleton {
+    background: linear-gradient(
+        90deg,
+        #eee 25%,
+        #ddd 50%,
+        #eee 75%
+    );
+    background-size: 200% 100%;
+    animation: order-skeleton-loading 1.5s infinite;
+    border-radius: 6px;
+}
+
+.order-skeleton-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-skeleton-title {
+    width: 130px;
+    height: 18px;
+}
+
+.order-skeleton-text {
+    width: 170px;
+    height: 14px;
+}
+
+.order-skeleton-status {
+    width: 80px;
+    height: 25px;
+}
+
+.order-skeleton-date {
+    width: 120px;
+    height: 16px;
+}
+
+.order-skeleton-books {
+    width: 100%;
+    height: 40px;
+    margin-top: 15px;
+}
+
+@keyframes order-skeleton-loading {
+    to {
+        background-position: -200% 0;
+    }
+}

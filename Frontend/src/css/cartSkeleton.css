@@ -1,0 +1,46 @@
+.cart-skeleton {
+    list-style: none;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        #eeeeee 25%,
+        #dddddd 50%,
+        #eeeeee 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 6px;
+}
+
+.cart-skeleton-title {
+    width: 60%;
+    height: 20px;
+    margin-bottom: 15px;
+}
+
+.cart-skeleton-text {
+    width: 80%;
+    height: 14px;
+    margin-bottom: 15px;
+}
+
+.cart-skeleton-price {
+    width: 35%;
+    height: 18px;
+    margin-bottom: 15px;
+}
+
+.cart-skeleton-button {
+    width: 100px;
+    height: 35px;
+}
+
+@keyframes skeleton-loading {
+    to {
+        background-position: -200% 0;
+    }
+}

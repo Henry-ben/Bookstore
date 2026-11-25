@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import DashboardSkeleton from "../component/DashboardSkeleton";
+import "../css/dashboardSkeleton.css";
 import"../css/dashboard.css"
 
 export default function Dashboard(){
     const [orders, setOrders] = useState([]);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState("All")
     const mostOrdered = {};
 
@@ -60,6 +63,8 @@ export default function Dashboard(){
                 setOrders(response.data);
             }catch(error){
                 console.error("Error fetching orders:", error);
+            }finally{
+                setLoading(false);
             }
     }
 
@@ -106,95 +111,101 @@ export default function Dashboard(){
               <h2>Dashboard</h2>
               <p>Overview of the store</p>
             </div>
-            <div className="stats">
-                <section className="stat">
-                    <p>BOOKS SOLD:</p>
-                    <h3>{booksSold}</h3>
-                </section>
-                <section className="stat">
-                    <p>Revenue:</p> 
-                    <h3>₦{revenue.toLocaleString()}</h3>
-                </section>
-                <section className="stat">
-                    <p>Total Orders: </p>
-                    <h3>{orders.length}</h3>
-                </section>
-                <section className="stat">
-                    <p>Pending Orders:</p>
-                    <h3>{pendingOrders}</h3>
-                </section>        
-            </div>
-
-            <div className="tools">
-                <input 
-                    type="text"  
-                    placeholder="Search by customer, phonenumber or reference"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-                <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                    <option value="All">All ({pendingOrders})</option>
-                    <option value="Processing">Processing ({processingOrders})</option>
-                    <option value="Ready">Ready ({readyOrders})</option>
-                    <option value="Delivered">Delivered ({deliverdOrders})</option>
-                </select>
-            </div>
-
-            <div className="dash-grid">
-                <section className="card">
-                    <h2>Most books sold</h2>
-                    <div className="best">
-                        <ul>
-                            {Object.entries(mostOrdered).map(([title, quantity]) => (
-                                <li key={title}>
-                                    <p><strong>{title}</strong>: {quantity} Sold</p>
-                                </li>
-                            ))}
-                        </ul>
+            {loading ? (
+                <DashboardSkeleton />
+            ) : (
+                <>
+                    <div className="stats">
+                        <section className="stat">
+                            <p>BOOKS SOLD:</p>
+                            <h3>{booksSold}</h3>
+                        </section>
+                        <section className="stat">
+                            <p>Revenue:</p> 
+                            <h3>₦{revenue.toLocaleString()}</h3>
+                        </section>
+                        <section className="stat">
+                            <p>Total Orders: </p>
+                            <h3>{orders.length}</h3>
+                        </section>
+                        <section className="stat">
+                            <p>Pending Orders:</p>
+                            <h3>{pendingOrders}</h3>
+                        </section>        
                     </div>
-                </section>
-                <section className="card">
-                    <h2>Recent Orders</h2>
-                    <div className="orders">
-                        {recentOrders.map((order) =>(
-                            <div className="order" key={order.id}>
-                                <div className="order-head">
-                                    <div>
-                                        <h4>Customer: {order.customerName}</h4>
-                                        <p>Reference: {order.reference}</p>
-                                    </div>
-                                    <span className="status">Status: {order.status}</span>
-                                </div>
-                                <p>Phone: {order.customerPhone}</p>
-                                <p className="total">Total: ₦{order.totalPrice}</p>
-                                <select
-                                value={order.status}
-                                onChange={(e) => updateStatus(order.id, e.target.value)}
-                                >
-                                    <option value="Processing">Processing</option>
-                                    <option value="Ready">Ready</option>
-                                    <option value="Delivered">Delivered</option>
-                                
-                                </select>
-                                
-                                <h5>Books:</h5>
-                                <ul className="order-books">
-                                    {order.books.map((book) => (
-                                        <li key={book.title}>
-                                            {book.title} x {book.quantity} 
+
+                    <div className="tools">
+                        <input 
+                            type="text"  
+                            placeholder="Search by customer, phonenumber or reference"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                        <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="All">All ({pendingOrders})</option>
+                            <option value="Processing">Processing ({processingOrders})</option>
+                            <option value="Ready">Ready ({readyOrders})</option>
+                            <option value="Delivered">Delivered ({deliverdOrders})</option>
+                        </select>
+                    </div>
+
+                    <div className="dash-grid">
+                        <section className="card">
+                            <h2>Most books sold</h2>
+                            <div className="best">
+                                <ul>
+                                    {Object.entries(mostOrdered).map(([title, quantity]) => (
+                                        <li key={title}>
+                                            <p><strong>{title}</strong>: {quantity} Sold</p>
                                         </li>
                                     ))}
                                 </ul>
-
-                                <hr/>
                             </div>
-                        ))}
+                        </section>
+                        <section className="card">
+                            <h2>Recent Orders</h2>
+                            <div className="orders">
+                                {recentOrders.map((order) =>(
+                                    <div className="order" key={order.id}>
+                                        <div className="order-head">
+                                            <div>
+                                                <h4>Customer: {order.customerName}</h4>
+                                                <p>Reference: {order.reference}</p>
+                                            </div>
+                                            <span className="status">Status: {order.status}</span>
+                                        </div>
+                                        <p>Phone: {order.customerPhone}</p>
+                                        <p className="total">Total: ₦{order.totalPrice}</p>
+                                        <select
+                                        value={order.status}
+                                        onChange={(e) => updateStatus(order.id, e.target.value)}
+                                        >
+                                            <option value="Processing">Processing</option>
+                                            <option value="Ready">Ready</option>
+                                            <option value="Delivered">Delivered</option>
+                                        
+                                        </select>
+                                        
+                                        <h5>Books:</h5>
+                                        <ul className="order-books">
+                                            {order.books.map((book) => (
+                                                <li key={book.title}>
+                                                    {book.title} x {book.quantity} 
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        <hr/>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
                     </div>
-                </section>
-            </div>
+            </>
+        )}
         </div>
     );
 }
